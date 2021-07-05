@@ -24,10 +24,11 @@ app.post("/create", (req, res) => {
     "INSERT INTO taskdata (taskText) VALUES (?)",
     [taskText],
     (err, result) => {
+      console.log(result)
       if (err) {
         console.log(err);
       } else {
-        res.send("Values Inserted");
+        res.status(200).json({Id: result.insertId});
       }
     }
   );
@@ -43,14 +44,26 @@ app.post("/create", (req, res) => {
     });
   });
 
-  app.delete("/delete/:id", (req, res) => {
+app.delete("/delete/:id", (req, res) => {
+    console.log('backend up')
     const id = req.params.id;
-    db.query("DELETE FROM taskdata WHERE id = ?", id, (err, result) => {
+    try {db.query("DELETE FROM taskdata WHERE Id = ?", id, (err, result) => {
       if (err) {
         console.log(err);
       } else {
         res.send(result);
       }
-    });
-  });
-
+    })
+    } catch(err) {
+      console.log(err)
+    }
+});
+  
+app.post("/update/:id", (req, res)=>{
+  const id = req.params.id
+  const sqlUpdate = "UPDATE taskdata SET completed = true WHERE Id = ?"
+  db.query(sqlUpdate, id, (err, result) => {
+          if (err)
+          console.log(err)
+  })
+})
